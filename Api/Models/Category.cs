@@ -10,12 +10,12 @@ namespace Api.Models
     {
         [Key]
         public Int32 Id { get; set; }
-        [Required]
-        [StringLength(100)]
+        [Required (ErrorMessage = "Nome da categoria é obrigatório")]
+        [StringLength(100, ErrorMessage = "Máximo 100 caracteres")]
         public String Name { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [Required (ErrorMessage = "Cor da categoria é obrigatório")]
+        [StringLength(100, ErrorMessage = "Máximo 100 caracteres")]
         public String Color { get; set; }
 
         public Category()

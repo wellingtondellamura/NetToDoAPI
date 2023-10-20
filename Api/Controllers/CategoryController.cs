@@ -57,6 +57,7 @@ namespace Api.Controllers
                 return NotFound();
             }
             categoryInDb.Name = category.Name;
+            categoryInDb.Color = category.Color;
             _context.SaveChanges();
             return NoContent();
         }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,8 +11,8 @@ namespace Api.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required]
-        [StringLength(100)]
+        [Required (ErrorMessage = "Nome do ToDo é obrigatório")]
+        [StringLength(100, ErrorMessage = "Máximo 100 caracteres")]
         public string Task { get; set; } = String.Empty;
         public bool IsCompleted { get; set; }= false;
         public DateTime CreatedAt { get; set; } = DateTime.Now;

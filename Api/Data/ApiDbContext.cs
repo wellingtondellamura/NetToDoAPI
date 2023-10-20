@@ -13,9 +13,10 @@ namespace Api.Data
         {
         }
 
+
         public DbSet<Category> Categories { get; set; }
         public DbSet<ToDo> ToDos { get; set; }
-        public DbSet<User> Users { get; set; } 
+        public DbSet<User> Users { get; set; }
 
     }
 }

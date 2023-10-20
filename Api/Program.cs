@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Api.Data;
+using Api.Auth;
 
 namespace Api;
 
@@ -11,6 +12,11 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         // Add services to the container.
+
+        // Add injeção de dependência do Auth token service
+        builder.Services.AddTransient<AuthService>();
+        builder.Services.AddTransient<CryptService>();
+
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

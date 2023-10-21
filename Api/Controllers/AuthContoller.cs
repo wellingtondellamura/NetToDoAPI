@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Api.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/v1/[controller]")]
     public class AuthContoller : ControllerBase
     {
         private readonly ApiDbContext _context;
@@ -28,21 +28,17 @@ namespace Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var findUser = _context.Users.AsNoTracking().FirstOrDefault(u => u.Email == user.Email);
-            
+            var findUser = _context.Users.AsNoTracking().FirstOrDefault(u => u.Email == user.Email);           
             var passwordEncrypt = _cryptService.Encrypt(user.Password);
+                       
 
-            var findPassword = _context.Users.AsNoTracking().FirstOrDefault(u => u.Password == passwordEncrypt);
-            
-            
-
-            if (findUser == null || findPassword == null)
+            if (findUser == null || (findUser.Password != passwordEncrypt))
             {
                 return Unauthorized();
-            } else
+            } 
+            else
             {
                 var token = _authService.Generate(findUser);
-                
                 return Ok(token);
             }
         }
@@ -50,16 +46,14 @@ namespace Api.Controllers
         [HttpPost("register")]
         public IActionResult Register([FromBody] User user)
         {
- 
-
             var passwordEncrypt = _cryptService.Encrypt(user.Password);
-
-            user.Password = passwordEncrypt;
-            
+            user.Password = passwordEncrypt;          
             _context.Users.Add(user);
             _context.SaveChanges();
 
+            //return 201 http code
             return Ok();
+            
         }
 
     }

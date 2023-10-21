@@ -11,8 +11,8 @@ namespace Api.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required (ErrorMessage = "Nome do ToDo È obrigatÛrio")]
-        [StringLength(100, ErrorMessage = "M·ximo 100 caracteres")]
+        [Required (ErrorMessage = "Informa√ß√£o Obrigat√≥ria")]
+        [StringLength(100, ErrorMessage = "M√°ximo 100 caracteres")]
         public string Task { get; set; } = String.Empty;
         public bool IsCompleted { get; set; }= false;
         public DateTime CreatedAt { get; set; } = DateTime.Now;

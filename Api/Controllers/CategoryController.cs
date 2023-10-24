@@ -1,7 +1,9 @@
 using Api.Data;
+using Api.Data.Dto.CategoryDto;
 using Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api.Controllers
 {
@@ -20,9 +22,21 @@ namespace Api.Controllers
         [Authorize(Roles = "User")]
         public IActionResult Get()
         {
-            return Ok(_context.Categories);
-        }
+            if (User.Identity.Name == null)
+            {
+                return Unauthorized();
+            }
 
+            var userId = _context.Users.AsNoTracking().FirstOrDefault(u => u.Name == User.Identity.Name);
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(_context.Categories.Where(u => u.UserId == userId.Id).ToList()); 
+        }
+            
         [HttpGet("{id}")]
         [Authorize(Roles = "User")]
         public IActionResult Get(int id)
@@ -37,12 +51,32 @@ namespace Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User")]
-        public IActionResult Post([FromBody] Category category)
+        public IActionResult Post([FromBody] WriteCategoryDto categoryDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            if (User.Identity.Name == null)
+            {
+                return Unauthorized();
+            }
+
+            var userId = _context.Users.AsNoTracking().FirstOrDefault(u => u.Name == User.Identity.Name);
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            Category category = new()
+            {
+                Name = categoryDto.Name,
+                Color = categoryDto.Color,
+                UserId = userId.Id,
+            };
+
             _context.Categories.Add(category);
             _context.SaveChanges();
             return CreatedAtAction("Get", new { id = category.Id }, category);
@@ -50,19 +84,29 @@ namespace Api.Controllers
         
         [HttpPut("{id}")]
         [Authorize(Roles = "User")]
-        public IActionResult Put(int id, [FromBody] Category category)
+        public IActionResult Put(int id, [FromBody] WriteCategoryDto categoryDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            var category = new Category()
+            {
+                Name = categoryDto.Name,
+                Color = categoryDto.Color,
+            };
+
             var categoryInDb = _context.Categories.Find(id);
+
             if (categoryInDb == null)
             {
                 return NotFound();
             }
+
             categoryInDb.Name = category.Name;
             categoryInDb.Color = category.Color;
+
             _context.SaveChanges();
             return NoContent();
         }

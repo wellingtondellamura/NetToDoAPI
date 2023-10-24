@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Api.Models
 {
@@ -17,6 +18,10 @@ namespace Api.Models
         [Required (ErrorMessage = "Cor da categoria é obrigatória")]
         [StringLength(100, ErrorMessage = "Máximo 100 caracteres")]
         public String Color { get; set; }
+
+        [Required]
+        [ForeignKey("User")]
+        public int UserId { get; set; }
 
         public Category()
         {

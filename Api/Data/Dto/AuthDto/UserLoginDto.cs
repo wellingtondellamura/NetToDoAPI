@@ -1,27 +1,27 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Api.Data.Dto
+namespace Api.Data.Dto.AuthDto
 {
     public class UserLoginDto
     {
         [Required]
         [StringLength(100, ErrorMessage = "Email precisar conter 100 caracteres")]
-        public String Email { get; set; }
+        public string Email { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "Senha precisar conter 100 caracteres")]
-        public String Password { get; set; }
+        public string Password { get; set; }
 
         public UserLoginDto()
         {
-            this.Email = "";
-            this.Password = "";
+            Email = "";
+            Password = "";
         }
 
-        public UserLoginDto(Int32 id, String name, String email, String password)
+        public UserLoginDto(int id, string name, string email, string password)
         {
-            this.Email = email;
-            this.Password = password;
+            Email = email;
+            Password = password;
         }
     }
 }

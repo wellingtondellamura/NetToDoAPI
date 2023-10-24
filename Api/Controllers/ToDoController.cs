@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Api.Data;
+using Api.Data.Dto.ToDoDto;
 using Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -49,12 +50,34 @@ namespace Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User")]
-        public IActionResult Post([FromBody] ToDo toDo)
-        {
+        public IActionResult Post([FromBody] WriteToDoDto toDoDto)
+        {   
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            var userId = _context.Users.AsNoTracking().FirstOrDefault(u => u.Name == User.Identity.Name);
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var verifyCategory = _context.Categories.AsNoTracking().FirstOrDefault(c => c.Id == toDoDto.CategoryId && c.UserId == userId.Id);
+
+            if (verifyCategory == null)
+            {
+                return Unauthorized();
+            }
+
+            ToDo toDo = new()
+            {
+                UserId = userId.Id,
+                CategoryId = toDoDto.CategoryId,
+                Task = toDoDto.Task,
+            };
+
             _context.ToDos.Add(toDo);
             _context.SaveChanges();
             return CreatedAtAction("Get", new { id = toDo.Id }, toDo);
@@ -62,17 +85,44 @@ namespace Api.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Roles = "User")]
-        public IActionResult Put(int id, [FromBody] ToDo toDo)
+        public IActionResult Put(int id, [FromBody] WriteToDoDto toDoDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            var userId = _context.Users.AsNoTracking().FirstOrDefault(u => u.Name == User.Identity.Name);
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+
             var toDoInDb = _context.ToDos.Find(id);
+
             if (toDoInDb == null)
             {
                 return NotFound();
             }
+
+            var verifyCategory = _context.Categories.AsNoTracking().FirstOrDefault(c => c.Id == toDoDto.CategoryId && c.UserId == userId.Id);
+
+            if (verifyCategory == null)
+            {
+                return Unauthorized();
+            }
+
+
+            ToDo toDo = new()
+            {
+                UserId = userId.Id,
+                CategoryId = toDoDto.CategoryId,
+                Task = toDoDto.Task,
+                IsCompleted = toDoDto.IsCompleted,
+            };
+
             toDoInDb.Task = toDo.Task;
             toDoInDb.IsCompleted = toDo.IsCompleted;
             toDoInDb.CreatedAt = toDo.CreatedAt;
@@ -112,13 +162,13 @@ namespace Api.Controllers
 
         [HttpGet("search/{task}")]
         [Authorize(Roles = "User")]
-        public IActionResult Search(string task)
+        public IActionResult Search(String task)
         {
             var toDos = _context.ToDos.Where(toDo => toDo.Task.Contains(task));
             return Ok(toDos);
         }
 
-        [HttpPut("complete/{id}")]
+        [HttpPatch("complete/{id}")]
         [Authorize(Roles = "User")]
         public IActionResult Complete(int id)
         {

@@ -18,14 +18,14 @@ namespace Api.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         
         [Required]
+        [ForeignKey("Category")]
         public int CategoryId { get; set; }
 
-        public Category? Category { get; set; }
+        public Category Category { get; set; }
 
         [Required]
+        [ForeignKey("User")]
         public int UserId { get; set; }
-
-        public User? User { get; set; }
 
         public ToDo()
         {

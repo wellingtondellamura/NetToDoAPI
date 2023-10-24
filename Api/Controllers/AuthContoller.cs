@@ -1,6 +1,6 @@
 ﻿using Api.Auth;
 using Api.Data;
-using Api.Data.Dto;
+using Api.Data.Dto.AuthDto;
 using Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +26,11 @@ namespace Api.Controllers
         [AllowAnonymous]
         public IActionResult Login([FromBody] UserLoginDto userDto)
         {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             User user = new()
             {
                 Email = userDto.Email, 

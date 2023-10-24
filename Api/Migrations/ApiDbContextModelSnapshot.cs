@@ -33,7 +33,12 @@ namespace Api.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Categories");
                 });
@@ -100,6 +105,17 @@ namespace Api.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Api.Models.Category", b =>
+                {
+                    b.HasOne("Api.Models.User", "User")
+                        .WithMany("Categories")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Api.Models.ToDo", b =>
                 {
                     b.HasOne("Api.Models.Category", "Category")
@@ -109,7 +125,7 @@ namespace Api.Migrations
                         .IsRequired();
 
                     b.HasOne("Api.Models.User", "User")
-                        .WithMany()
+                        .WithMany("ToDos")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -117,6 +133,13 @@ namespace Api.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Api.Models.User", b =>
+                {
+                    b.Navigation("Categories");
+
+                    b.Navigation("ToDos");
                 });
 #pragma warning restore 612, 618
         }

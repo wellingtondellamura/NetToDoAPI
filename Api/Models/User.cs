@@ -25,6 +25,10 @@ namespace Api.Models
         [StringLength(100)]
         public String Password { get; set; }
 
+        public virtual ICollection<ToDo> ToDos { get; set; }
+
+        public virtual ICollection<Category> Categories { get; set; }
+
         public User()
         {
             this.Id = 0;

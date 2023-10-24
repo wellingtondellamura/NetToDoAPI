@@ -1,6 +1,8 @@
 ﻿using Api.Auth;
 using Api.Data;
+using Api.Data.Dto;
 using Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,12 +23,14 @@ namespace Api.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] User user)
+        [AllowAnonymous]
+        public IActionResult Login([FromBody] UserLoginDto userDto)
         {
-            if (!ModelState.IsValid)
+            User user = new()
             {
-                return BadRequest(ModelState);
-            }
+                Email = userDto.Email, 
+                Password = userDto.Password 
+            };
 
             var findUser = _context.Users.AsNoTracking().FirstOrDefault(u => u.Email == user.Email);           
             var passwordEncrypt = _cryptService.Encrypt(user.Password);
@@ -44,14 +48,22 @@ namespace Api.Controllers
         }
 
         [HttpPost("register")]
-        public IActionResult Register([FromBody] User user)
+        [AllowAnonymous]
+        public IActionResult Register([FromBody] UserRegisterDto userDto)
         {
+
+            User user = new()
+            {
+                Name = userDto.Name,
+                Email = userDto.Email,
+                Password = userDto.Password
+            };
+
             var passwordEncrypt = _cryptService.Encrypt(user.Password);
             user.Password = passwordEncrypt;          
             _context.Users.Add(user);
             _context.SaveChanges();
 
-            //return 201 http code
             return Ok();
             
         }

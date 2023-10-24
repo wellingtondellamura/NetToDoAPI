@@ -1,5 +1,6 @@
 using Api.Data;
 using Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -16,12 +17,14 @@ namespace Api.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "User")]
         public IActionResult Get()
         {
             return Ok(_context.Categories);
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "User")]
         public IActionResult Get(int id)
         {
             var category = _context.Categories.Find(id);
@@ -33,6 +36,7 @@ namespace Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "User")]
         public IActionResult Post([FromBody] Category category)
         {
             if (!ModelState.IsValid)
@@ -45,6 +49,7 @@ namespace Api.Controllers
         }
         
         [HttpPut("{id}")]
+        [Authorize(Roles = "User")]
         public IActionResult Put(int id, [FromBody] Category category)
         {
             if (!ModelState.IsValid)
@@ -63,6 +68,7 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "User")]
         public IActionResult Delete(int id)
         {
             var categoryInDb = _context.Categories.Find(id);

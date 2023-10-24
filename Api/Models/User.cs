@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,6 +19,8 @@ namespace Api.Models
         [StringLength(100)]
         public String Email { get; set; }
 
+        public String Role { get; set; } = "User";
+
         [Required]
         [StringLength(100)]
         public String Password { get; set; }
@@ -28,6 +31,7 @@ namespace Api.Models
             this.Name = "";
             this.Email = "";
             this.Password = "";
+            this.Role = "User";
         }
 
         public User(Int32 id, String name, String email, String password)
@@ -36,6 +40,7 @@ namespace Api.Models
             this.Name = name;
             this.Email = email;
             this.Password = password;
+            this.Role = "User";
         }
     }
 }

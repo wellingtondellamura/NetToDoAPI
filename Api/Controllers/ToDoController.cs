@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Api.Data;
 using Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ namespace Api.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "User")]
         public IActionResult Get()
         {
             return Ok(_context.ToDos
@@ -30,6 +32,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "User")]
         public IActionResult Get(int id)
         {
             var toDo = _context.ToDos
@@ -45,6 +48,7 @@ namespace Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "User")]
         public IActionResult Post([FromBody] ToDo toDo)
         {
             if (!ModelState.IsValid)
@@ -57,6 +61,7 @@ namespace Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "User")]
         public IActionResult Put(int id, [FromBody] ToDo toDo)
         {
             if (!ModelState.IsValid)
@@ -76,6 +81,7 @@ namespace Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "User")]
         public IActionResult Delete(int id)
         {
             var toDoInDb = _context.ToDos.Find(id);
@@ -89,6 +95,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("completed")]
+        [Authorize(Roles = "User")]
         public IActionResult GetCompleted()
         {
             var completedToDos = _context.ToDos.Where(toDo => toDo.IsCompleted);
@@ -96,6 +103,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("pending")]
+        [Authorize(Roles = "User")]
         public IActionResult GetPending()
         {
             var pendingToDos = _context.ToDos.Where(toDo => !toDo.IsCompleted);
@@ -103,6 +111,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("search/{task}")]
+        [Authorize(Roles = "User")]
         public IActionResult Search(string task)
         {
             var toDos = _context.ToDos.Where(toDo => toDo.Task.Contains(task));
@@ -110,6 +119,7 @@ namespace Api.Controllers
         }
 
         [HttpPut("complete/{id}")]
+        [Authorize(Roles = "User")]
         public IActionResult Complete(int id)
         {
             var toDoInDb = _context.ToDos.Find(id);

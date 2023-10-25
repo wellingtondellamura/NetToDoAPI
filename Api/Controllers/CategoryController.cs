@@ -23,21 +23,24 @@ namespace Api.Controllers
         [Authorize(Roles = "User")]
         public IActionResult Get()
         {
+            var id = int.Parse(User.FindFirst(ClaimTypes.Sid).Value);
+
             //Get user id from token 
-            var userId = HttpContext.User.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid);
+            var userId = _context.Users.FirstOrDefault(u => u.Id == id);
+
             if (userId == null)
             {
                 return Unauthorized();
             }
             //check if user exist in database
-            var user = _context.Users.Find(userId.Value);
+            var user = _context.Users.Find(userId.Id);
             if (user == null)
             {
                 return BadRequest();
             }
-            return Ok(_context.Categories.Where(u => u.UserId == user.Id).ToList());          
+            return Ok(_context.Categories.Where(u => u.UserId == user.Id).ToList());
         }
-            
+
         [HttpGet("{id}")]
         [Authorize(Roles = "User")]
         public IActionResult Get(int id)
@@ -59,12 +62,17 @@ namespace Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (User.Identity.Name == null)
+            var id = int.Parse(User.FindFirst(ClaimTypes.Sid).Value);
+
+            //Get user id from token 
+            var userId = _context.Users.FirstOrDefault(u => u.Id == id);
+
+            if (userId == null)
             {
                 return Unauthorized();
             }
-
-            var userId = _context.Users.AsNoTracking().FirstOrDefault(u => u.Name == User.Identity.Name);
+            //check if user exist in database
+            var user = _context.Users.Find(userId.Id);
 
             if (userId == null)
             {

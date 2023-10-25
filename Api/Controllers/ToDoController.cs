@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Api.Data;
 using Api.Data.Dto.ToDoDto;
@@ -57,7 +58,9 @@ namespace Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var userId = _context.Users.AsNoTracking().FirstOrDefault(u => u.Name == User.Identity.Name);
+            var id = int.Parse(User.FindFirst(ClaimTypes.Sid).Value);
+
+            var userId = _context.Users.AsNoTracking().FirstOrDefault(u => u.Id == id);
 
             if (userId == null)
             {
@@ -92,7 +95,9 @@ namespace Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var userId = _context.Users.AsNoTracking().FirstOrDefault(u => u.Name == User.Identity.Name);
+            var claimId = int.Parse(User.FindFirst(ClaimTypes.Sid).Value);
+
+            var userId = _context.Users.AsNoTracking().FirstOrDefault(u => u.Id == claimId);
 
             if (userId == null)
             {

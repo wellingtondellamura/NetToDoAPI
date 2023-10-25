@@ -27,11 +27,24 @@ namespace Api.Controllers
         [Authorize(Roles = "User")]
         public IActionResult Get()
         {
-            return Ok(_context.ToDos
-                                .Include(toDo => toDo.Category)  //inclui o objeto da categoria (JOIN)
-                                .AsNoTracking()  //não rastreia as alterações (melhora a performance)
-                                .ToList());      //converte para lista
+            var userId = int.Parse(User.FindFirst(ClaimTypes.Sid).Value);
+
+            var user = _context.Users.AsNoTracking().FirstOrDefault(u => u.Id == userId);
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            var userToDos = _context.ToDos
+                .Where(toDo => toDo.UserId == userId) 
+                .Include(toDo => toDo.Category)
+                .AsNoTracking()
+                .ToList();
+
+            return Ok(userToDos);
         }
+
 
         [HttpGet("{id}")]
         [Authorize(Roles = "User")]

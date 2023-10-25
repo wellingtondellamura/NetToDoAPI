@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Api.Data;
 using Api.Data.Dto.CategoryDto;
 using Api.Models;
@@ -22,19 +23,19 @@ namespace Api.Controllers
         [Authorize(Roles = "User")]
         public IActionResult Get()
         {
-            if (User.Identity.Name == null)
-            {
-                return Unauthorized();
-            }
-
-            var userId = _context.Users.AsNoTracking().FirstOrDefault(u => u.Name == User.Identity.Name);
-
+            //Get user id from token 
+            var userId = HttpContext.User.Claims.FirstOrDefault(u => u.Type == ClaimTypes.Sid);
             if (userId == null)
             {
                 return Unauthorized();
             }
-
-            return Ok(_context.Categories.Where(u => u.UserId == userId.Id).ToList()); 
+            //check if user exist in database
+            var user = _context.Users.Find(userId.Value);
+            if (user == null)
+            {
+                return BadRequest();
+            }
+            return Ok(_context.Categories.Where(u => u.UserId == user.Id).ToList());          
         }
             
         [HttpGet("{id}")]
